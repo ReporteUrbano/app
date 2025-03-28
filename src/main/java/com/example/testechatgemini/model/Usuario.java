@@ -1,4 +1,4 @@
-package com.example.testechatgemini;
+package com.example.testechatgemini.model;
 
 public class Usuario {
     private int id;

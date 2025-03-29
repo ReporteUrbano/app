@@ -1,6 +1,5 @@
-package com.example.testechatgemini.controller;
-import com.example.testechatgemini.model.Ocorrencia;
-import com.example.testechatgemini.service.OcorrenciaService;
+package com.example.reporteurbano.controller;
+import com.example.reporteurbano.service.OcorrenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

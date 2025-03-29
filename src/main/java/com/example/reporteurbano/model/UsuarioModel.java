@@ -1,9 +1,9 @@
-package com.example.testechatgemini.model;
+package com.example.reporteurbano.model;
 
 import jakarta.persistence.*;
 
 @Entity
-public class Usuario {
+public class UsuarioModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -11,13 +11,19 @@ public class Usuario {
 
     private String nome;
     private String cpf;
+    private String cep;
+    private String genero;
 
-    public Usuario(int id, String nome, String cpf) {
-        this.id = id;
+    // Construtor sem parâmetros (necessário para o JPA)
+    public UsuarioModel() {
+    }
+
+    public UsuarioModel(String nome, String cpf) {
         this.nome = nome;
         this.cpf = cpf;
     }
 
+    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -40,13 +46,5 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
-    }
-
-    public void autenticar(){
-
-    }
-
-    public void cadastrar(){
-
     }
 }

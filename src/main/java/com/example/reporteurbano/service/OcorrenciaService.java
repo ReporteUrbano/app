@@ -1,10 +1,7 @@
-package com.example.testechatgemini.service;
+package com.example.reporteurbano.service;
 
-import com.example.testechatgemini.model.Ocorrencia;
-import com.example.testechatgemini.repository.OcorrenciaRepository;
+import com.example.reporteurbano.repository.OcorrenciaRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class OcorrenciaService {

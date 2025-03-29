@@ -1,4 +1,4 @@
-package com.example.testechatgemini;
+package com.example.reporteurbano;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,6 +1,6 @@
-package com.example.testechatgemini.controller;
+package com.example.reporteurbano.controller;
 
-import com.example.testechatgemini.service.GeminiService;
+import com.example.reporteurbano.service.GeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

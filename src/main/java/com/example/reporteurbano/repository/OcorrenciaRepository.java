@@ -1,6 +1,6 @@
-package com.example.testechatgemini.repository;
+package com.example.reporteurbano.repository;
 
-import com.example.testechatgemini.model.Ocorrencia;
+import com.example.reporteurbano.model.Ocorrencia;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OcorrenciaRepository extends JpaRepository<Ocorrencia, Long> {

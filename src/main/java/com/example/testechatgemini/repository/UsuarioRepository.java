@@ -1,8 +1,0 @@
-package com.example.testechatgemini.repository;
-
-import com.example.testechatgemini.model.Ocorrencia;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-public interface UsuarioRepository extends JpaRepository<Ocorrencia, Long> {
-    // métodos customizados vão aqui se precisar depois
-}

@@ -1,4 +1,4 @@
-package com.example.testechatgemini.service;
+package com.example.reporteurbano.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

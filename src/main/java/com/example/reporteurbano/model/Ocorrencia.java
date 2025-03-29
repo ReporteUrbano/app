@@ -1,7 +1,8 @@
-package com.example.testechatgemini.model;
+package com.example.reporteurbano.model;
 
 import jakarta.persistence.*;
 
+@Table(name = "o correncias")
 @Entity
 public class Ocorrencia {
 

@@ -13,7 +13,7 @@ public class GeminiController {
     @Autowired
     private GeminiService geminiService;
 
-    @PostMapping(value = "/perguntar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/perguntar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE) // Define endpoint
     public String perguntarIA(
             @RequestParam("pergunta") String pergunta,
             @RequestParam("imagem") MultipartFile imagem) {

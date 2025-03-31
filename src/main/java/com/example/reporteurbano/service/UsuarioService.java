@@ -1,6 +1,6 @@
 package com.example.reporteurbano.service;
 
-import com.example.reporteurbano.model.UsuarioModel;
+import com.example.reporteurbano.model.Usuario;
 import com.example.reporteurbano.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,17 +17,17 @@ public class UsuarioService {
     }
 
     // Criar ou atualizar usuário
-    public UsuarioModel saveUsuario(UsuarioModel usuario) {
+    public Usuario cadastrarUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
     // Buscar todos os usuários
-    public List<UsuarioModel> getAllUsuarios() {
+    public List<Usuario> getAllUsuarios() {
         return usuarioRepository.findAll();
     }
 
     // Buscar um usuário por ID
-    public Optional<UsuarioModel> getUsuarioById(int id) {
+    public Optional<Usuario> getUsuarioById(int id) {
         return usuarioRepository.findById(id);
     }
 
@@ -35,4 +35,11 @@ public class UsuarioService {
     public void deleteUsuario(int id) {
         usuarioRepository.deleteById(id);
     }
+
+    //Buscar por cpf
+    public Optional<Usuario> buscarPorCpf(String cpf) {
+        return usuarioRepository.findByCpf(cpf);
+    }
+
 }
+

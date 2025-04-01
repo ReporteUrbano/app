@@ -20,7 +20,7 @@ public class UsuarioController {
     }
 
     // Criar ou atualizar usuário
-    @PostMapping
+    @PostMapping("/register")
     public UsuarioModel createOrUpdateUsuario(@RequestBody UsuarioModel usuario) {
         return usuarioService.saveUsuario(usuario);
     }
@@ -36,6 +36,9 @@ public class UsuarioController {
     public Optional<UsuarioModel> getUsuarioById(@PathVariable int id) {
         return usuarioService.getUsuarioById(id);
     }
+
+    @GetMapping("/cpf/{cpf}")
+    public Optional<UsuarioModel> getUsuarioByCPF(@PathVariable String cpf){return usuarioService.getUsuarioByCPF(cpf);}
 
     // Deletar usuário
     @DeleteMapping("/{id}")

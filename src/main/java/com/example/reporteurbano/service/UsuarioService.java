@@ -35,4 +35,8 @@ public class UsuarioService {
     public void deleteUsuario(int id) {
         usuarioRepository.deleteById(id);
     }
+
+    public Optional<UsuarioModel> getUsuarioByCPF(String cpf) {
+        return usuarioRepository.findByCpf(cpf);
+    }
 }

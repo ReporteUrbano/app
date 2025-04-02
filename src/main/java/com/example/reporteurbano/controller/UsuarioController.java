@@ -22,7 +22,7 @@ public class UsuarioController {
 
     // Criar ou atualizar usuário
 
-    @PostMapping
+    @PostMapping("/register")
     public Usuario createOrUpdateUsuario(@RequestBody Usuario usuario) {
         return usuarioService.cadastrarUsuario(usuario);
     }

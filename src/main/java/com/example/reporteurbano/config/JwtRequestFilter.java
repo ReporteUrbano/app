@@ -1,7 +1,7 @@
 package com.example.reporteurbano.config;
 
 import com.example.reporteurbano.config.JwtUtil;
-import com.example.reporteurbano.model.UsuarioModel;
+import com.example.reporteurbano.model.Usuario;
 import com.example.reporteurbano.service.UsuarioService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (token != null && jwtUtil.validateToken(token, jwtUtil.extractCpf(token))) {
             String cpf = jwtUtil.extractCpf(token);
-            Optional<UsuarioModel> usuario = usuarioService.getUsuarioByCPF(cpf);
+            Optional<Usuario> usuario = usuarioService.buscarPorCpf(cpf);
 
             if (usuario.isPresent()) {
                 UsernamePasswordAuthenticationToken authentication =

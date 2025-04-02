@@ -3,7 +3,7 @@ package com.example.reporteurbano.model;
 import jakarta.persistence.*;
 
 @Entity
-public class UsuarioModel {
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,10 +15,10 @@ public class UsuarioModel {
     private String genero;
 
     // Construtor sem parâmetros (necessário para o JPA)
-    public UsuarioModel() {
+    public Usuario() {
     }
 
-    public UsuarioModel(String nome, String cpf) {
+    public Usuario(String nome, String cpf) {
         this.nome = nome;
         this.cpf = cpf;
     }

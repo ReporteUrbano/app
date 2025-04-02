@@ -2,7 +2,7 @@ package com.example.reporteurbano.controller;
 
 import com.example.reporteurbano.config.JwtUtil;
 import com.example.reporteurbano.model.LoginRequest;
-import com.example.reporteurbano.model.UsuarioModel;
+import com.example.reporteurbano.model.Usuario;
 import com.example.reporteurbano.service.UsuarioService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +29,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        Optional<UsuarioModel> usuario = usuarioService.getUsuarioByCPF(loginRequest.getCpf());
+        Optional<Usuario> usuario = usuarioService.buscarPorCpf(loginRequest.getCpf());
 
         if (usuario.isEmpty() || !usuario.get().getNome().equals(loginRequest.getNome())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");

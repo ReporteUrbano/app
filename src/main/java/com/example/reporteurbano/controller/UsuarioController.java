@@ -1,8 +1,9 @@
 package com.example.reporteurbano.controller;
 
-import com.example.reporteurbano.model.UsuarioModel;
+import com.example.reporteurbano.model.Usuario;
 import com.example.reporteurbano.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,29 +21,36 @@ public class UsuarioController {
     }
 
     // Criar ou atualizar usuário
-    @PostMapping("/register")
-    public UsuarioModel createOrUpdateUsuario(@RequestBody UsuarioModel usuario) {
-        return usuarioService.saveUsuario(usuario);
+
+    @PostMapping
+    public Usuario createOrUpdateUsuario(@RequestBody Usuario usuario) {
+        return usuarioService.cadastrarUsuario(usuario);
     }
 
     // Buscar todos os usuários
     @GetMapping
-    public List<UsuarioModel> getAllUsuarios() {
+    public List<Usuario> getAllUsuarios() {
         return usuarioService.getAllUsuarios();
     }
 
     // Buscar usuário por ID
     @GetMapping("/{id}")
-    public Optional<UsuarioModel> getUsuarioById(@PathVariable int id) {
+    public Optional<Usuario> getUsuarioById(@PathVariable int id) {
         return usuarioService.getUsuarioById(id);
     }
 
     @GetMapping("/cpf/{cpf}")
-    public Optional<UsuarioModel> getUsuarioByCPF(@PathVariable String cpf){return usuarioService.getUsuarioByCPF(cpf);}
+    public ResponseEntity<?> buscarPorCpf(@PathVariable String cpf) {
+        Optional<Usuario> usuario = usuarioService.buscarPorCpf(cpf);
+        return usuario.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     // Deletar usuário
     @DeleteMapping("/{id}")
     public void deleteUsuario(@PathVariable int id) {
         usuarioService.deleteUsuario(id);
     }
+
 }

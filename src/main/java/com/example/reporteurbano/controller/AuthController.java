@@ -36,7 +36,7 @@ public class AuthController {
         }
 
         // Gera o token JWT
-        String token = jwtUtil.generateToken(loginRequest.getCpf());
+        String token = jwtUtil.generateToken(usuario.get().getCpf(), usuario.get().getId());
 
         // Define um cookie com o token
         Cookie cookie = new Cookie("jwt", token);

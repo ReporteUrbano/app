@@ -1,8 +1,9 @@
 package com.example.reporteurbano.model;
 
+import com.example.reporteurbano.config.JwtUtil;
 import jakarta.persistence.*;
 
-@Table(name = "o correncias")
+@Table(name = "ocorrencias")
 @Entity
 public class Ocorrencia {
 
@@ -18,8 +19,7 @@ public class Ocorrencia {
 
     public Ocorrencia() {}
 
-    public Ocorrencia(int idUsuario, String tituloProblema, String descricao, String localizacao, String foto) {
-        this.idUsuario = idUsuario;
+    public Ocorrencia(String tituloProblema, String descricao, String localizacao, String foto) {
         this.tituloProblema = tituloProblema;
         this.descricao = descricao;
         this.localizacao = localizacao;

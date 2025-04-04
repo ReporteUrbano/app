@@ -1,8 +1,11 @@
 package com.example.reporteurbano.service;
 
+import com.example.reporteurbano.config.JwtUtil;
 import com.example.reporteurbano.model.Ocorrencia;
 import com.example.reporteurbano.model.Ocorrencia;
 import com.example.reporteurbano.repository.OcorrenciaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +13,9 @@ import java.util.Optional;
 
 @Service
 public class OcorrenciaService {
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private final OcorrenciaRepository OcorrenciaRepository;
 

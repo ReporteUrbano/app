@@ -28,20 +28,7 @@ public class OcorrenciaController {
     // Criar ou atualizar usuário
     @PostMapping
     public Ocorrencia createOcorrencia(@RequestBody Ocorrencia ocorrencia, HttpServletRequest request) {
-        // Obtém o token do cookie
-        String token = jwtUtil.getTokenFromCookies(request);
-
-        if (token == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token não encontrado no cookie");
-        }
-
-        // Obtém o ID do usuário logado a partir do token JWT
-        int idUsuario = jwtUtil.getUserIdFromToken(token);
-
-        // Define o ID do usuário na ocorrência antes de salvar
-        ocorrencia.setIdUsuario(idUsuario);
-
-        return ocorrenciaService.saveOcorrencia(ocorrencia);
+        return ocorrenciaService.saveOcorrencia(ocorrencia, request);
     }
 
     // Buscar todos os usuários
@@ -54,6 +41,11 @@ public class OcorrenciaController {
     @GetMapping("/{id}")
     public Optional<Ocorrencia> getOcorrenciaById(@PathVariable int id) {
         return ocorrenciaService.getOcorrenciaById(id);
+    }
+
+    @GetMapping("/all") //retorna todasa as ocorrencias do usuairo logado
+    public List<Ocorrencia> getAllOcorrenciaByLogin(HttpServletRequest request){
+        return ocorrenciaService.getAllOcorrenciaByLogin(request);
     }
 
     // Deletar usuário

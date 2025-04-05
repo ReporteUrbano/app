@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -32,7 +34,8 @@ public class AuthController {
         Optional<Usuario> usuario = usuarioService.buscarPorCpf(loginRequest.getCpf());
 
         if (usuario.isEmpty() || !usuario.get().getNome().equals(loginRequest.getNome())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+            Map<String, String> errorBody = Map.of("error", "Credenciais inválidas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody);
         }
 
         // Gera o token JWT
@@ -41,12 +44,18 @@ public class AuthController {
         // Define um cookie com o token
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // Em produção, deve ser true para HTTPS
+        cookie.setSecure(false); // Em produção, deve ser true
         cookie.setPath("/");
         cookie.setMaxAge(60 * 60); // 1 hora
 
         response.addCookie(cookie);
 
-        return ResponseEntity.ok("Login realizado com sucesso!");
+        Map<String, Object> successBody = Map.of(
+                "message", "Login realizado com sucesso!",
+                "userId", usuario.get().getId()
+        );
+
+        return ResponseEntity.ok(successBody);
+
     }
 }

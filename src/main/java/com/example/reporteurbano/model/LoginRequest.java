@@ -1,9 +1,10 @@
 package com.example.reporteurbano.model;
 
-public class LoginRequest { //uma classe responsável por armazenas as informações deusuário e senha
+public class LoginRequest { //uma classe responsável por armazenar as informações de usuário e senha
 
     //não chamamos diretamente a UsuarioModel para não ter um número alto de processamentos
     //e não ter o perigo de chamar uma classe sensível antes do necessário
+
     private String cpf;
     private String nome;
 

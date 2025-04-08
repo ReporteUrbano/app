@@ -18,6 +18,11 @@ public class UsuarioService {
 
     // Criar ou atualizar usuário
     public Usuario cadastrarUsuario(Usuario usuario) {
+        String cpf = usuario.getCpf();
+        //so deixa cadastrar CPFs não cadastrados
+        if (usuarioRepository.findByCpf(cpf).isPresent()) {
+            return null; // CPF já existe
+        }
         return usuarioRepository.save(usuario);
     }
 

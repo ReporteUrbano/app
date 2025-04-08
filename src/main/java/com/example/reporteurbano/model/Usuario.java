@@ -1,6 +1,7 @@
 package com.example.reporteurbano.model;
 
 import jakarta.persistence.*;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 @Entity
 public class Usuario {
@@ -10,6 +11,7 @@ public class Usuario {
     private int id;
 
     private String nome;
+    @Unique
     private String cpf;
     private String cep;
     private String genero;

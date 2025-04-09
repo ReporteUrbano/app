@@ -31,31 +31,37 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        Optional<Usuario> usuario = usuarioService.buscarPorCpf(loginRequest.getCpf());
+        try {
+            Optional<Usuario> usuario = usuarioService.buscarPorCpf(loginRequest.getCpf());
 
-        if (usuario.isEmpty() || !usuario.get().getNome().equals(loginRequest.getNome())) {
-            Map<String, String> errorBody = Map.of("error", "Credenciais inválidas");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody);
+            if (usuario.isEmpty() || !usuario.get().getNome().equals(loginRequest.getNome())) {
+                Map<String, String> errorBody = Map.of("error", "Credenciais inválidas");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody);
+            }
+
+            // Gera o token JWT
+            String token = jwtUtil.generateToken(usuario.get().getCpf(), usuario.get().getId());
+
+            // Define um cookie com o token
+            Cookie cookie = new Cookie("jwt", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(false); // Em produção, deve ser true
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60); // 1 hora
+            response.addCookie(cookie);
+
+            Map<String, Object> successBody = Map.of(
+                    "message", "Login realizado com sucesso!",
+                    "userId", usuario.get().getId()
+            );
+
+            return ResponseEntity.ok(successBody);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Erro interno ao tentar realizar login"));
         }
-
-        // Gera o token JWT
-        String token = jwtUtil.generateToken(usuario.get().getCpf(), usuario.get().getId());
-
-        // Define um cookie com o token
-        Cookie cookie = new Cookie("jwt", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false); // Em produção, deve ser true
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60); // 1 hora
-
-        response.addCookie(cookie);
-
-        Map<String, Object> successBody = Map.of(
-                "message", "Login realizado com sucesso!",
-                "userId", usuario.get().getId()
-        );
-
-        return ResponseEntity.ok(successBody);
-
     }
+
 }

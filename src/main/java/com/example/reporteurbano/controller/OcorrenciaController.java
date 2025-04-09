@@ -6,6 +6,7 @@ import com.example.reporteurbano.service.OcorrenciaService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,32 +26,70 @@ public class OcorrenciaController {
         this.ocorrenciaService = ocorrenciaService;
     }
 
-    // Criar ou atualizar usuário
+    // Criar ou atualizar ocorrencia
     @PostMapping
-    public Ocorrencia createOcorrencia(@RequestBody Ocorrencia ocorrencia, HttpServletRequest request) {
-        return ocorrenciaService.saveOcorrencia(ocorrencia, request);
+    public ResponseEntity<?> createOcorrencia(@RequestBody Ocorrencia ocorrencia, HttpServletRequest request) {
+        try {
+            Ocorrencia novaOcorrencia = ocorrenciaService.saveOcorrencia(ocorrencia, request);
+            return new ResponseEntity<>(novaOcorrencia, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao criar ocorrência", HttpStatus.BAD_REQUEST);
+        }
     }
 
-    // Buscar todos os usuários
+
+    // Buscar todos as ocorrencias
     @GetMapping
-    public List<Ocorrencia> getAllUsuarios() {
-        return ocorrenciaService.getAllOcorrencias();
+    public ResponseEntity<?> getAllOcorrencias() {
+        try {
+            List<Ocorrencia> ocorrencias = ocorrenciaService.getAllOcorrencias();
+            return new ResponseEntity<>(ocorrencias, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao buscar ocorrências", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Buscar usuário por ID
+
+    // Buscar ocorrencia por ID
     @GetMapping("/{id}")
-    public Optional<Ocorrencia> getOcorrenciaById(@PathVariable int id) {
-        return ocorrenciaService.getOcorrenciaById(id);
+    public ResponseEntity<?> getOcorrenciaById(@PathVariable int id) {
+        try {
+            Optional<Ocorrencia> ocorrencia = ocorrenciaService.getOcorrenciaById(id);
+            if (ocorrencia.isPresent()) {
+                return new ResponseEntity<>(ocorrencia.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ocorrência não encontrada", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao buscar ocorrência por ID", HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/all") //retorna todasa as ocorrencias do usuairo logado
-    public List<Ocorrencia> getAllOcorrenciaByLogin(HttpServletRequest request){
-        return ocorrenciaService.getAllOcorrenciaByLogin(request);
+    //retorna todasa as ocorrencias do usuairo logado
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllOcorrenciasByLogin(HttpServletRequest request) {
+        try {
+            List<Ocorrencia> ocorrencias = ocorrenciaService.getAllOcorrenciaByLogin(request);
+            return new ResponseEntity<>(ocorrencias, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao buscar ocorrências por login", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // Deletar usuário
+
+    // Deletar ocorrencia
     @DeleteMapping("/{id}")
-    public void deleteOcorrencia(@PathVariable int id) {
-        ocorrenciaService.deleteOcorrencia(id);
+    public ResponseEntity<?>deleteOcorrencia(@PathVariable int id) {
+        try {
+            ocorrenciaService.deleteOcorrencia(id);
+            return new ResponseEntity<>("Ocorrência deletada com sucesso", HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao deletar ocorrência", HttpStatus.BAD_REQUEST);
+        }
     }
-}
+    }

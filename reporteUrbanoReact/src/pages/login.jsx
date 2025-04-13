@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 
-const Login = () => {
+const Login = () => {  
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [error, setError] = useState("");
@@ -16,6 +16,7 @@ const Login = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cpf, nome }),
+      credentials: "include"
     });
   
     const data = await response.json();

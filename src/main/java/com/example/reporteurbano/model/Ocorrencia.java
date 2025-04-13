@@ -15,7 +15,9 @@ public class Ocorrencia {
     private String tituloProblema;
     private String descricao;
     private String localizacao;
+    @Column(columnDefinition = "TEXT")
     private String foto;
+
 
     public Ocorrencia() {}
 

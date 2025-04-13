@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import com.example.reporteurbano.service.GeminiService;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,29 +18,43 @@ import java.util.Optional;
 @RequestMapping("/api/ocorrencias")
 public class OcorrenciaController {
 
+    @Autowired
+    private GeminiService geminiService;
+
     private final OcorrenciaService ocorrenciaService;
 
     @Autowired
     private JwtUtil jwtUtil; // Classe utilitária para extrair informações do token
+
     @Autowired
     public OcorrenciaController(OcorrenciaService ocorrenciaService) {
         this.ocorrenciaService = ocorrenciaService;
     }
 
-    // Criar ou atualizar ocorrencia
+    // Criar ou atualizar ocorrência
     @PostMapping
     public ResponseEntity<?> createOcorrencia(@RequestBody Ocorrencia ocorrencia, HttpServletRequest request) {
         try {
+            // Chama a IA com a descrição e a imagem Base64
+            String respostaIA = geminiService.gerarOrientacaoIA(ocorrencia);
+
+            // Salva a ocorrência normalmente
             Ocorrencia novaOcorrencia = ocorrenciaService.saveOcorrencia(ocorrencia, request);
-            return new ResponseEntity<>(novaOcorrencia, HttpStatus.CREATED);
+
+            // Retorna tanto a ocorrência quanto a resposta da IA
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    Map.of(
+                            "ocorrencia", novaOcorrencia,
+                            "descricaoIa", respostaIA // Retorna a resposta da IA
+                    )
+            );
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Erro ao criar ocorrência", HttpStatus.BAD_REQUEST);
         }
     }
 
-
-    // Buscar todos as ocorrencias
+    // Buscar todas as ocorrências
     @GetMapping
     public ResponseEntity<?> getAllOcorrencias() {
         try {
@@ -51,8 +66,7 @@ public class OcorrenciaController {
         }
     }
 
-
-    // Buscar ocorrencia por ID
+    // Buscar ocorrência por ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getOcorrenciaById(@PathVariable int id) {
         try {
@@ -68,7 +82,7 @@ public class OcorrenciaController {
         }
     }
 
-    //retorna todasa as ocorrencias do usuairo logado
+    // Retorna todas as ocorrências do usuário logado
     @GetMapping("/all")
     public ResponseEntity<?> getAllOcorrenciasByLogin(HttpServletRequest request) {
         try {
@@ -80,10 +94,9 @@ public class OcorrenciaController {
         }
     }
 
-
-    // Deletar ocorrencia
+    // Deletar ocorrência
     @DeleteMapping("/{id}")
-    public ResponseEntity<?>deleteOcorrencia(@PathVariable int id) {
+    public ResponseEntity<?> deleteOcorrencia(@PathVariable int id) {
         try {
             ocorrenciaService.deleteOcorrencia(id);
             return new ResponseEntity<>("Ocorrência deletada com sucesso", HttpStatus.NO_CONTENT);
@@ -92,4 +105,4 @@ public class OcorrenciaController {
             return new ResponseEntity<>("Erro ao deletar ocorrência", HttpStatus.BAD_REQUEST);
         }
     }
-    }
+}

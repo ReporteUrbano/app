@@ -26,7 +26,11 @@ public class UsuarioController {
     public ResponseEntity<?> createOrUpdateUsuario(@RequestBody Usuario usuario) {
         try {
             Usuario novoUsuario = usuarioService.cadastrarUsuario(usuario);
-            return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
+            if(novoUsuario == null){
+                return new ResponseEntity<>(novoUsuario, HttpStatus.BAD_REQUEST);
+            }else{
+                return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Erro ao cadastrar/atualizar usuário", HttpStatus.BAD_REQUEST);

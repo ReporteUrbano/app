@@ -60,18 +60,17 @@ public class JwtUtil {
                 .getBody();
     }
 
-    //funcao que procura o token jwt dentro ods cookies
-    public String getTokenFromCookies(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
+
+    // Função para pegar o token do Header Authorization
+    public String getTokenFromHeader(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7); // Remove "Bearer " e pega só o token
         }
         return null;
     }
+
 
     //metodo que procura o idUser dentro do token
     public int getUserIdFromToken(String token) {

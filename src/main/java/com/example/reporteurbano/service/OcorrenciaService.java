@@ -28,8 +28,8 @@ public class OcorrenciaService {
 
     // Criar ou atualizar usuário
     public Ocorrencia saveOcorrencia(Ocorrencia ocorrencia, HttpServletRequest request) {
-        // Obtém o token do cookie
-        String token = jwtUtil.getTokenFromCookies(request);
+        // Obtém o token do header
+        String token = jwtUtil.getTokenFromHeader(request);
 
         if (token == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token não encontrado no cookie");
@@ -60,7 +60,7 @@ public class OcorrenciaService {
     }
 
     public List<Ocorrencia> getAllOcorrenciaByLogin(HttpServletRequest request) {
-        String token = jwtUtil.getTokenFromCookies(request);
+        String token = jwtUtil.getTokenFromHeader(request);
 
         if (token == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token não encontrado no cookie");

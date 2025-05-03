@@ -20,12 +20,14 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String nome, String cpf) {
+    public Usuario(int id, String nome, @Unique String cpf, String cep, String genero) {
+        this.id = id;
         this.nome = nome;
         this.cpf = cpf;
+        this.cep = cep;
+        this.genero = genero;
     }
 
-    // Getters e Setters
     public int getId() {
         return id;
     }
@@ -48,5 +50,21 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
     }
 }

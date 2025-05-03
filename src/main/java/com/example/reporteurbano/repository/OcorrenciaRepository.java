@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface OcorrenciaRepository extends JpaRepository<Ocorrencia, Long> {
     List<Ocorrencia> findByIdUsuario(int id);
-    // métodos customizados vão aqui se precisar depois
 }

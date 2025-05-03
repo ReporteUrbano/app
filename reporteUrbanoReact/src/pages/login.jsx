@@ -12,11 +12,10 @@ const Login = () => {
     e.preventDefault();
     setError("");
   
-    const response = await fetch("http://localhost:8081/auth/login", {
+    const response = await fetch("http://192.168.18.156:8081/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cpf, nome }),
-      credentials: "include"
     });
   
     const data = await response.json();
@@ -24,6 +23,7 @@ const Login = () => {
     if (response.ok) {
       console.log("Usuário logado:", data);
       localStorage.setItem("userId", data.userId); // Armazena o id no localStorage
+      localStorage.setItem("token", data.token); // Armazena o token no localStorage
       navigate("/dashboard"); // Redireciona para o dashboard após login
     } else {
       setError(data.error || "Erro desconhecido ao fazer login");

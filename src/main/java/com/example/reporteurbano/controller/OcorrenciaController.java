@@ -1,6 +1,6 @@
 package com.example.reporteurbano.controller;
 
-import com.example.reporteurbano.config.JwtUtil;
+import com.example.reporteurbano.dto.OcorrenciaDTO;
 import com.example.reporteurbano.model.Ocorrencia;
 import com.example.reporteurbano.service.OcorrenciaService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,7 +14,9 @@ import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
+@CrossOrigin
 @RequestMapping("/api/ocorrencias")
 public class OcorrenciaController {
 
@@ -24,22 +26,26 @@ public class OcorrenciaController {
     private final OcorrenciaService ocorrenciaService;
 
     @Autowired
-    private JwtUtil jwtUtil; // Classe utilitária para extrair informações do token
-
-    @Autowired
     public OcorrenciaController(OcorrenciaService ocorrenciaService) {
         this.ocorrenciaService = ocorrenciaService;
     }
 
     // Criar ou atualizar ocorrência
     @PostMapping
-    public ResponseEntity<?> createOcorrencia(@RequestBody Ocorrencia ocorrencia, HttpServletRequest request) {
+    public ResponseEntity<?> createOcorrencia(@RequestBody OcorrenciaDTO dto, HttpServletRequest request) {
+        Ocorrencia ocorrencia = new Ocorrencia();
+        ocorrencia.setTituloProblema(dto.tituloProblema());
+        ocorrencia.setDescricao(dto.descricao());
+        ocorrencia.setLocalizacao(dto.localizacao());
+        ocorrencia.setFoto(dto.foto());
+        ocorrencia.setIdUsuario(dto.userId());
+
         try {
             // Chama a IA com a descrição e a imagem Base64
             String respostaIA = geminiService.gerarOrientacaoIA(ocorrencia);
 
             // Salva a ocorrência normalmente
-            Ocorrencia novaOcorrencia = ocorrenciaService.saveOcorrencia(ocorrencia, request);
+            Ocorrencia novaOcorrencia = ocorrenciaService.saveOcorrencia(ocorrencia);
 
             // Retorna tanto a ocorrência quanto a resposta da IA
             return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -83,10 +89,10 @@ public class OcorrenciaController {
     }
 
     // Retorna todas as ocorrências do usuário logado
-    @GetMapping("/all")
-    public ResponseEntity<?> getAllOcorrenciasByLogin(HttpServletRequest request) {
+    @GetMapping("/all/{userId}")
+    public ResponseEntity<?> getAllOcorrenciasByLogin(@PathVariable int userId) {
         try {
-            List<Ocorrencia> ocorrencias = ocorrenciaService.getAllOcorrenciaByLogin(request);
+            List<Ocorrencia> ocorrencias = ocorrenciaService.getAllOcorrenciaByLogin(userId);
             return new ResponseEntity<>(ocorrencias, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

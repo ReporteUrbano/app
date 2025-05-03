@@ -6,6 +6,7 @@ import "./NovaOcorrencia.css"; // Importando o arquivo de estilo
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
 
+  const [idUsuarioLogado, setIdUsuarioLogado] = useState(localStorage.getItem("userId"));
   const [tituloProblema, setTituloProblema] = useState("");
   const [descricao, setDescricao] = useState("");
   const [localizacao, setLocalizacao] = useState("");
@@ -37,9 +38,8 @@ const NovaOcorrencia = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8081/api/ocorrencias",
-        novaOcorrencia,
-        { withCredentials: true }
+        "http://192.168.18.156:8081/api/ocorrencias",
+        novaOcorrencia
       );
 
       // Verifica se a resposta tem a descrição da IA

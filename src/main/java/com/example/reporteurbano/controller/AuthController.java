@@ -1,56 +1,53 @@
 package com.example.reporteurbano.controller;
 
-import com.example.reporteurbano.config.JwtUtil;
-import com.example.reporteurbano.model.LoginRequest;
+import com.example.reporteurbano.dto.LoginRequestDTO;
+import com.example.reporteurbano.dto.RegisterRequestDTO;
+import com.example.reporteurbano.dto.ResponseDTO;
+import com.example.reporteurbano.infra.security.TokenService;
 import com.example.reporteurbano.model.Usuario;
-import com.example.reporteurbano.service.UsuarioService;
-import org.springframework.http.HttpStatus;
+import com.example.reporteurbano.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.swing.text.html.Option;
+import java.util.Objects;
 import java.util.Optional;
 
+
 @RestController
+@CrossOrigin
 @RequestMapping("/auth")
 public class AuthController {
+    private final UsuarioRepository repository;
+    private final TokenService tokenService;
 
-    private final JwtUtil jwtUtil;
-    private final UsuarioService usuarioService;
-
-    public AuthController(JwtUtil jwtUtil, UsuarioService usuarioService) {
-        this.jwtUtil = jwtUtil;
-        this.usuarioService = usuarioService;
+    public AuthController(UsuarioRepository repository, TokenService tokenService) {
+        this.repository = repository;
+        this.tokenService = tokenService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            Optional<Usuario> usuario = usuarioService.buscarPorCpf(loginRequest.getCpf());
-
-            //se os dados estiverem incorretos ou o nome estiver incorreto
-            if (usuario.isEmpty() || !usuario.get().getNome().equals(loginRequest.getNome())) {
-                Map<String, String> errorBody = Map.of("error", "Credenciais inválidas");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorBody);
-            }
-
-            // Gera o token JWT
-            String token = jwtUtil.generateToken(usuario.get().getCpf(), usuario.get().getId());
-
-            //gera uma body response
-            Map<String, Object> successBody = new HashMap<>();
-            successBody.put("message", "Login realizado com sucesso!");
-            successBody.put("userId", usuario.get().getId());
-            successBody.put("token", token); // <--- Enviamos o token no body da resposta!
-
-            return ResponseEntity.ok(successBody);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Erro interno ao tentar realizar login"));
+    public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body){
+        Usuario user =  this.repository.findByCpf(body.cpf()).orElseThrow(() -> new RuntimeException("User not found"));
+        if(Objects.equals(user.getCpf(), body.cpf())){
+            String token = this.tokenService.generateToken(user);
+            return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
         }
+        return ResponseEntity.badRequest().build();
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO body){
+        Optional<Usuario> user =  this.repository.findByCpf(body.cpf());
+        if (user.isEmpty()){
+            Usuario newUser = new Usuario();
+            newUser.setNome(body.nome());
+            newUser.setCpf(body.cpf());
+            newUser.setCep(body.cep());
+            newUser.setGenero(body.genero());
+            String token = this.tokenService.generateToken(newUser);
+            return ResponseEntity.ok(new ResponseDTO(newUser.getId(), token));
+        }
+        return ResponseEntity.badRequest().build();
+    }
 }

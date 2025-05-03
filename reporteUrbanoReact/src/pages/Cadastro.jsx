@@ -14,7 +14,7 @@ const Cadastro = () => {
     e.preventDefault();
     setError("");
 
-    const response = await fetch("http://localhost:8081/api/users/register", {
+    const response = await fetch("http://192.168.18.156:8081/api/users/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome, cpf, cep, genero }),

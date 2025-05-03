@@ -1,13 +1,12 @@
 package com.example.reporteurbano.service;
 
-import com.example.reporteurbano.config.JwtUtil;
-import com.example.reporteurbano.model.Ocorrencia;
+import com.example.reporteurbano.dto.OcorrenciaDTO;
+import com.example.reporteurbano.infra.security.TokenService;
 import com.example.reporteurbano.model.Ocorrencia;
 import com.example.reporteurbano.repository.OcorrenciaRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,7 +17,7 @@ import java.util.Optional;
 public class OcorrenciaService {
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private TokenService tokenService;
 
     private final OcorrenciaRepository OcorrenciaRepository;
 
@@ -27,48 +26,26 @@ public class OcorrenciaService {
     }
 
     // Criar ou atualizar usuário
-    public Ocorrencia saveOcorrencia(Ocorrencia ocorrencia, HttpServletRequest request) {
-        // Obtém o token do header
-        String token = jwtUtil.getTokenFromHeader(request);
-
-        if (token == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token não encontrado no cookie");
-        }
-
-        // Obtém o ID do usuário logado a partir do token JWT
-        int idUsuario = jwtUtil.getUserIdFromToken(token);
-
-        // Define o ID do usuário na ocorrência antes de salvar
-        ocorrencia.setIdUsuario(idUsuario);
-
+    public Ocorrencia saveOcorrencia(Ocorrencia ocorrencia) {
         return OcorrenciaRepository.save(ocorrencia);
     }
 
-    // Buscar todos os usuários
+    // Buscar todas as ocorrências
     public List<Ocorrencia> getAllOcorrencias() {
         return OcorrenciaRepository.findAll();
     }
 
-    // Buscar um usuário por ID
+    // Buscar uma ocorrência por ID
     public Optional<Ocorrencia> getOcorrenciaById(long id) {
         return OcorrenciaRepository.findById(id);
     }
 
-    // Deletar um usuário
+    // Deletar uma ocorrência
     public void deleteOcorrencia(long id) {
         OcorrenciaRepository.deleteById(id);
     }
 
-    public List<Ocorrencia> getAllOcorrenciaByLogin(HttpServletRequest request) {
-        String token = jwtUtil.getTokenFromHeader(request);
-
-        if (token == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token não encontrado no cookie");
-        }
-
-        // Obtém o ID do usuário logado a partir do token JWT
-        int idUsuario = jwtUtil.getUserIdFromToken(token);
-
-        return OcorrenciaRepository.findByIdUsuario(idUsuario);
+    public List<Ocorrencia> getAllOcorrenciaByLogin(int userId) {
+        return OcorrenciaRepository.findByIdUsuario(userId);
     }
 }

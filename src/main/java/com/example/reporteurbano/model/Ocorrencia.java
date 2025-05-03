@@ -1,6 +1,5 @@
 package com.example.reporteurbano.model;
 
-import com.example.reporteurbano.config.JwtUtil;
 import jakarta.persistence.*;
 
 @Table(name = "ocorrencias")

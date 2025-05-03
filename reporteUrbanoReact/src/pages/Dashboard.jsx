@@ -6,19 +6,26 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [ocorrencias, setOcorrencias] = useState([]);
 
+  const idUsuarioLogado = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
-    const idUsuarioLogado = localStorage.getItem("userId");
+
     if (!idUsuarioLogado) {
       navigate("/");
     } else {
       fetchOcorrencias();
+      
+      console.log("ID do usuário logado:", idUsuarioLogado);
+      console.log("Token do usuário logado:", token);
+      
     }
   }, [navigate]);
 
   const fetchOcorrencias = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/ocorrencias/all", {
-        withCredentials: true, // importante para enviar o cookie com o JWT
+      const response = await axios.get("http://192.168.18.156:8081/api/ocorrencias/all/" + idUsuarioLogado, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       setOcorrencias(response.data);
     } catch (error) {

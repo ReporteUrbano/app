@@ -12,7 +12,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
   
-    const response = await fetch("http://192.168.18.156:8081/auth/login", {
+    const response = await fetch("http://192.168.5.116:8081/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cpf, nome }),

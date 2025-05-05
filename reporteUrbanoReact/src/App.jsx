@@ -3,6 +3,7 @@ import Login from "./pages/login";
 import Cadastro from "./pages/Cadastro";
 import Dashboard from "./pages/Dashboard";
 import NovaOcorrencia from "./pages/NovaOcorrencia"; // importa aqui
+import MapPage from "./pages/mapPage";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/nova-ocorrencia" element={<NovaOcorrencia />} /> {/* nova rota */}
+        <Route path="/mapa" element={<MapPage />} />
       </Routes>
     </Router>
   );

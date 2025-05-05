@@ -1,18 +1,46 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./NovaOcorrencia.css"; // Importando o arquivo de estilo
 
+
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
 
-  const [idUsuarioLogado, setIdUsuarioLogado] = useState(localStorage.getItem("userId"));
+  const token = localStorage.getItem("token");
+  console.log(localStorage.getItem("userId"));
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [tituloProblema, setTituloProblema] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [localizacao, setLocalizacao] = useState("");
+  const [localizacao, setLocalizacao] = useState();
   const [foto, setFoto] = useState(""); // Foto em Base64
   const [mensagem, setMensagem] = useState("");
   const [respostaIA, setRespostaIA] = useState("");
+
+  useEffect(() => {   //função para pegar a localização do usuário
+    const id = localStorage.getItem("userId");
+    if(id){
+      setUserId(id);
+    }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = `${position.coords.latitude},${position.coords.longitude}`;
+          setLocalizacao(coords);
+        },
+        (error) => {
+          console.error("Erro ao obter localização:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      console.error("Geolocalização não é suportada pelo navegador.");
+    }
+  }, []);
 
   // Função para converter imagem em Base64
   const handleFileChange = (e) => {
@@ -34,18 +62,22 @@ const NovaOcorrencia = () => {
       descricao,
       localizacao,
       foto,
+      userId
     };
 
     try {
       const response = await axios.post(
-        "http://192.168.18.156:8081/api/ocorrencias",
-        novaOcorrencia
+        "http://192.168.5.116:8081/api/ocorrencias",
+        novaOcorrencia,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
 
       // Verifica se a resposta tem a descrição da IA
       const descricaoIA =
-        response.data?.descricaoIa || 
-        response.data?.ocorrencia?.descricaoIa || 
+        response.data?.descricaoIa ||
+        response.data?.ocorrencia?.descricaoIa ||
         "";
 
       setRespostaIA(descricaoIA);
@@ -109,8 +141,8 @@ const NovaOcorrencia = () => {
       )}
 
       {respostaIA && (
-        <button 
-          onClick={handleBackToDashboard} 
+        <button
+          onClick={handleBackToDashboard}
           className="backButton"
         >
           Voltar para o Início

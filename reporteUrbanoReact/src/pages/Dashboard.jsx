@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const fetchOcorrencias = async () => {
     try {
-      const response = await axios.get("http://192.168.5.116:8081/api/ocorrencias/all/" + idUsuarioLogado, {
+      const response = await axios.get("http://localhost:8081/api/ocorrencias/all/" + idUsuarioLogado, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOcorrencias(response.data);

@@ -4,6 +4,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
 import './MapPage.css';
+import { useNavigate } from "react-router-dom";
+
 
 // Corrige o bug do ícone padrão do Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -14,6 +16,7 @@ L.Icon.Default.mergeOptions({
 });
 
 function LocationMarkerWithOcorrencias() {
+  const navigate = useNavigate();
   const [position, setPosition] = useState(null);
   const [ocorrencias, setOcorrencias] = useState([]);
   const map = useMap();
@@ -40,7 +43,7 @@ function LocationMarkerWithOcorrencias() {
   useEffect(() => {
     const fetchOcorrencias = async () => {
       try {
-        const response = await axios.get("http://192.168.5.116:8081/api/ocorrencias/all/" + idUsuarioLogado, {
+        const response = await axios.get("http://localhost:8081/api/ocorrencias/all/" + idUsuarioLogado, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOcorrencias(response.data);
@@ -56,7 +59,7 @@ function LocationMarkerWithOcorrencias() {
     <>
       {position && (
         <Marker position={position}>
-          <Popup>Você está aqui: {position.lat}, {position.lng}</Popup>
+          <Popup>Você está aqui: {position.lat}, {position.lng}<button onClick={() => navigate("/dashboard")}>Dashboard</button> </Popup>
         </Marker>
       )}
 

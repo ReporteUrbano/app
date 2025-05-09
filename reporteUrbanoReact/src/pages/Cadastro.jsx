@@ -14,19 +14,39 @@ const Cadastro = () => {
     e.preventDefault();
     setError("");
 
-    const response = await fetch("http://192.168.18.156:8081/api/users/register", {
+    const response = await fetch("http://localhost:8081/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome, cpf, cep, genero }),
     });
 
+    let data;
+    try {
+      data = await response.json();
+    } catch (err) {
+      setError("Erro inesperado do servidor.");
+      return;
+    }
+
     if (response.ok) {
-      console.log("Cadastro realizado!");
-      navigate("/"); // Voltar para login após cadastro
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
     } else {
-      setError("Erro ao cadastrar. Tente novamente.");
+      setError(data.error || "Erro ao cadastrar. Tente novamente.");
     }
   };
+  //   const data = await response.json();
+
+  //   if (response.ok) {
+  //     console.log("Cadastro realizado!");
+  //     localStorage.setItem("userId", data.userId); // Armazena o id no localStorage
+  //     localStorage.setItem("token", data.token); // Armazena o token no localStorage
+  //     navigate("/dashboard"); // Redireciona para o dashboard após cadastro
+  //   } else {
+  //     setError("Erro ao cadastrar. Tente novamente.");
+  //   }
+  // };
 
   return (
     <div className="cadastro-container">

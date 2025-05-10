@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Plus, Map } from "react-bootstrap-icons"; // Instale com: npm install react-bootstrap-icons
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,23 +11,21 @@ const Dashboard = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-
     if (!idUsuarioLogado) {
       navigate("/");
     } else {
       fetchOcorrencias();
-      
-      console.log("ID do usuário logado:", idUsuarioLogado);
-      console.log("Token do usuário logado:", token);
-      
     }
   }, [navigate]);
 
   const fetchOcorrencias = async () => {
     try {
-      const response = await axios.get("http://localhost:8081/api/ocorrencias/all/" + idUsuarioLogado, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `http://localhost:8081/api/ocorrencias/all/${idUsuarioLogado}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setOcorrencias(response.data);
     } catch (error) {
       console.error("Erro ao buscar ocorrências:", error);
@@ -35,43 +34,57 @@ const Dashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
+    localStorage.removeItem("token");
     navigate("/");
   };
 
   return (
-    <div className="dashboard-container">
-      <h1>Bem-vindo ao ReporteUrbano! 🚀</h1>
-      <p>Essas são suas ocorrências cadastradas:</p>
+    <div className="container py-4">
+      <h2 className="text-success text-center mb-4">Minhas Ocorrências</h2>
 
       {ocorrencias.length === 0 ? (
-        <p>Você ainda não cadastrou nenhuma ocorrência.</p>
+        <p className="text-center text-muted">Você ainda não cadastrou nenhuma ocorrência.</p>
       ) : (
-<ul>
-  {ocorrencias.map((ocorrencia) => (
-    <li key={ocorrencia.id}>
-      <strong>Título:</strong> {ocorrencia.tituloProblema} <br />
-      <strong>Descrição:</strong> {ocorrencia.descricao} <br />
-      <strong>Localização:</strong> {ocorrencia.localizacao} <br />
-      {ocorrencia.foto && (
-        <img
-          src={ocorrencia.foto}
-          alt="Foto da ocorrência"
-          style={{ width: "200px", marginTop: "10px" }}
-        />
-      )}
-      <hr />
-    </li>
-  ))}
-</ul>
-
+        <div className="list-group">
+          {ocorrencias.map((ocorrencia) => (
+            <div key={ocorrencia.id} className="list-group-item mb-3 shadow-sm rounded">
+              <h5 className="mb-1">{ocorrencia.tituloProblema}</h5>
+              <small className="text-muted">Categoria: {ocorrencia.categoria}</small>
+              <p className="mt-2">{ocorrencia.descricao}</p>
+              {ocorrencia.foto && (
+                <img
+                  src={ocorrencia.foto}
+                  alt="Foto da ocorrência"
+                  className="img-fluid rounded"
+                />
+              )}
+            </div>
+          ))}
+        </div>
       )}
 
-      <button onClick={() => navigate("/nova-ocorrencia")}>
-        Nova Ocorrência
+      <div className="d-flex justify-content-center mt-4">
+        <button onClick={handleLogout} className="btn btn-outline-danger">
+          Sair
+        </button>
+      </div>
+
+      {/* Botão flutuante Nova Ocorrência */}
+      <button
+        className="btn btn-success rounded-circle position-fixed"
+        style={{ bottom: "20px", right: "20px", width: "60px", height: "60px" }}
+        onClick={() => navigate("/nova-ocorrencia")}
+      >
+        <Plus size={30} color="white" />
       </button>
 
-      <button onClick={handleLogout} className="logout-button">
-        Sair
+      {/* Botão flutuante Mapa */}
+      <button
+        className="btn btn-primary rounded-circle position-fixed"
+        style={{ bottom: "20px", left: "20px", width: "60px", height: "60px" }}
+        onClick={() => navigate("/mapa")}
+      >
+        <Map size={26} color="white" />
       </button>
     </div>
   );

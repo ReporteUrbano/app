@@ -39,6 +39,7 @@ public class OcorrenciaController {
         ocorrencia.setLocalizacao(dto.localizacao());
         ocorrencia.setFoto(dto.foto());
         ocorrencia.setIdUsuario(dto.userId());
+        ocorrencia.setCategoria(dto.categoria());
 
         try {
             // Chama a IA com a descrição e a imagem Base64

@@ -15,13 +15,13 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-function LocationMarkerWithOcorrencias() {
+function LocationMarkerWithOcorrencias({ somenteMinhas, categoriaFiltro }) {
   const navigate = useNavigate();
   const [position, setPosition] = useState(null);
   const [ocorrencias, setOcorrencias] = useState([]);
   const map = useMap();
   const token = localStorage.getItem("token");
-  const idUsuarioLogado = localStorage.getItem("userId");
+  const idUsuarioLogado = parseInt(localStorage.getItem("userId"));
 
   useEffect(() => {
     map.locate({
@@ -43,28 +43,41 @@ function LocationMarkerWithOcorrencias() {
   useEffect(() => {
     const fetchOcorrencias = async () => {
       try {
-        const response = await axios.get("http://localhost:8081/api/ocorrencias/all/" + idUsuarioLogado, {
+        const response = await axios.get("http://localhost:8081/api/ocorrencias", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOcorrencias(response.data);
+        console.log("UserId : " + idUsuarioLogado);
+        console.log("Ocorrências:", response.data);
       } catch (error) {
         console.error("Erro ao buscar ocorrências:", error);
       }
     };
 
     fetchOcorrencias();
-  }, [idUsuarioLogado, token]);
+  }, [token]);
+
+  // Filtragem das ocorrências
+  const ocorrenciasFiltradas = ocorrencias.filter((ocorrencia) => {
+    const pertenceAoUsuario = ocorrencia.idUsuario === parseInt(idUsuarioLogado);
+    const categoriaCorresponde = categoriaFiltro === "" || ocorrencia.categoria === categoriaFiltro;
+
+    return (!somenteMinhas || pertenceAoUsuario) && categoriaCorresponde;
+  });
 
   return (
     <>
       {position && (
         <Marker position={position}>
-          <Popup>Você está aqui: {position.lat}, {position.lng}<button onClick={() => navigate("/dashboard")}>Dashboard</button> </Popup>
+          <Popup>
+            Você está aqui: {position.lat}, {position.lng}
+            <br />
+            <button onClick={() => navigate("/dashboard")}>Dashboard</button>
+          </Popup>
         </Marker>
       )}
 
-      {ocorrencias.map((ocorrencia, index) => {
-        // Supondo que o campo localização seja uma string como "LatLng(-23.657689, -52.605386)"
+      {ocorrenciasFiltradas.map((ocorrencia, index) => {
         const match = ocorrencia.localizacao?.match(/-?\d+\.\d+/g);
         if (!match || match.length < 2) return null;
 
@@ -75,7 +88,8 @@ function LocationMarkerWithOcorrencias() {
           <Marker key={index} position={[lat, lng]}>
             <Popup>
               <strong>{ocorrencia.tituloProblema}</strong><br />
-              {ocorrencia.descricao}
+              {ocorrencia.descricao}<br />
+              <em>Categoria: {ocorrencia.categoria}</em>
             </Popup>
           </Marker>
         );
@@ -85,15 +99,52 @@ function LocationMarkerWithOcorrencias() {
 }
 
 export default function MapPage() {
+  const [somenteMinhas, setSomenteMinhas] = useState(false);
+  const [categoriaFiltro, setCategoriaFiltro] = useState("");
+
   return (
     <div className="map-page" style={{ height: '100vh', width: '100vw', margin: 0, padding: 0 }}>
+      <div className="filtros-container">
+        <label>
+          <input
+            type="checkbox"
+            checked={somenteMinhas}
+            onChange={() => setSomenteMinhas(!somenteMinhas)}
+          />
+          {' '}Mostrar somente minhas ocorrências
+        </label>
+
+        <label>
+          Categoria:
+          <select
+            value={categoriaFiltro}
+            onChange={(e) => setCategoriaFiltro(e.target.value)}
+          >
+            <option value="">Todas</option>
+            <option value="Trânsito e Acidentes">Trânsito e Acidentes</option>
+            <option value="Saúde Pública">Saúde Pública</option>
+            <option value="Iluminação Pública">Iluminação Pública</option>
+            <option value="Buracos e Pavimentação">Buracos e Pavimentação</option>
+            <option value="Coleta de Lixo e Entulho">Coleta de Lixo e Entulho</option>
+            <option value="Água e Esgoto">Água e Esgoto</option>
+            <option value="Segurança Pública">Segurança Pública</option>
+            <option value="Poluição e Meio Ambiente">Poluição e Meio Ambiente</option>
+            <option value="Animais na Via Pública">Animais na Via Pública</option>
+            <option value="Infraestrutura Urbana">Infraestrutura Urbana</option>
+          </select>
+        </label>
+      </div>
+
       <MapContainer center={[-23.65, -52.60]} zoom={13} style={{ height: '100vh', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap"
           maxZoom={19}
         />
-        <LocationMarkerWithOcorrencias />
+        <LocationMarkerWithOcorrencias
+          somenteMinhas={somenteMinhas}
+          categoriaFiltro={categoriaFiltro}
+        />
       </MapContainer>
     </div>
   );

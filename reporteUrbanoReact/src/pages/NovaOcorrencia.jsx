@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import "./NovaOcorrencia.css";
 
 // Corrigindo o ícone do Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -36,11 +35,12 @@ const NovaOcorrencia = () => {
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [tituloProblema, setTituloProblema] = useState("");
   const [descricao, setDescricao] = useState("");
-  const [localizacao, setLocalizacao] = useState(""); // Salva como "lat,lng"
+  const [localizacao, setLocalizacao] = useState("");
   const [foto, setFoto] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [respostaIA, setRespostaIA] = useState("");
   const [userPosition, setUserPosition] = useState(null);
+  const [categoria, setCategoria] = useState("");
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -69,6 +69,7 @@ const NovaOcorrencia = () => {
 
     const novaOcorrencia = {
       tituloProblema,
+      categoria,
       descricao,
       localizacao,
       foto,
@@ -96,25 +97,51 @@ const NovaOcorrencia = () => {
   };
 
   return (
-    <div className="nova-ocorrencia-container">
-      <h2>Criar Nova Ocorrência</h2>
+    <div className="container py-4">
+      <h2 className="mb-4">Nova Ocorrência</h2>
 
-      <form onSubmit={handleSubmit} className="form">
-        <input
-          type="text"
-          placeholder="Título do problema"
-          value={tituloProblema}
-          onChange={(e) => setTituloProblema(e.target.value)}
-          className="input"
-        />
-        <textarea
-          placeholder="Descrição do problema"
-          value={descricao}
-          onChange={(e) => setDescricao(e.target.value)}
-          className="input"
-        />
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Título do problema"
+            value={tituloProblema}
+            onChange={(e) => setTituloProblema(e.target.value)}
+          />
+        </div>
 
-        <div style={{ height: "300px", marginBottom: "10px" }}>
+        <div className="mb-3">
+          <select
+            className="form-select"
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+          >
+            <option value="">Selecione uma categoria</option>
+            <option value="Trânsito e Acidentes">Trânsito e Acidentes</option>
+            <option value="Saúde Pública">Saúde Pública</option>
+            <option value="Iluminação Pública">Iluminação Pública</option>
+            <option value="Buracos e Pavimentação">Buracos e Pavimentação</option>
+            <option value="Coleta de Lixo e Entulho">Coleta de Lixo e Entulho</option>
+            <option value="Água e Esgoto">Água e Esgoto</option>
+            <option value="Segurança Pública">Segurança Pública</option>
+            <option value="Poluição e Meio Ambiente">Poluição e Meio Ambiente</option>
+            <option value="Animais na Via Pública">Animais na Via Pública</option>
+            <option value="Infraestrutura Urbana">Infraestrutura Urbana</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <textarea
+            className="form-control"
+            rows="3"
+            placeholder="Descrição do problema"
+            value={descricao}
+            onChange={(e) => setDescricao(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-3" style={{ height: "300px" }}>
           {userPosition && (
             <MapContainer center={userPosition} zoom={15} style={{ height: "100%", width: "100%" }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -128,26 +155,41 @@ const NovaOcorrencia = () => {
           )}
         </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="inputFile"
-        />
+        <div className="mb-3">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="form-control"
+          />
+        </div>
 
-        <button type="submit" className="button">Enviar Ocorrência</button>
+        <button type="submit" className="btn btn-primary w-100">Enviar Ocorrência</button>
       </form>
 
-      {mensagem && <p className="message">{mensagem}</p>}
+      {mensagem && <p className="mt-3 text-success">{mensagem}</p>}
       {respostaIA && (
         <>
-          <h3>Orientação da IA:</h3>
+          <h4 className="mt-4">Orientação da IA:</h4>
           <p>{respostaIA}</p>
-          <button onClick={() => navigate("/dashboard")} className="backButton">
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="btn btn-secondary mt-3"
+          >
             Voltar para o Início
           </button>
         </>
       )}
+
+      {/* Botão flutuante para voltar ao dashboard */}
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="btn btn-outline-dark position-fixed"
+        style={{ bottom: "20px", left: "20px", borderRadius: "50%", width: "50px", height: "50px" }}
+        title="Voltar ao Dashboard"
+      >
+        ←
+      </button>
     </div>
   );
 };

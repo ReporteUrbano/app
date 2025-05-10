@@ -97,89 +97,91 @@ const NovaOcorrencia = () => {
   };
 
   return (
-    <div className="container py-4">
-      <h2 className="mb-4">Nova Ocorrência</h2>
+    <div className="container d-flex justify-content-center align-items-center flex-column py-4">
+      <div className="col-lg-8 col-md-10 col-sm-12">
+        <h2 className="mb-4 text-center">Nova Ocorrência</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Título do problema"
-            value={tituloProblema}
-            onChange={(e) => setTituloProblema(e.target.value)}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Título do problema"
+              value={tituloProblema}
+              onChange={(e) => setTituloProblema(e.target.value)}
+            />
+          </div>
 
-        <div className="mb-3">
-          <select
-            className="form-select"
-            value={categoria}
-            onChange={(e) => setCategoria(e.target.value)}
-          >
-            <option value="">Selecione uma categoria</option>
-            <option value="Trânsito e Acidentes">Trânsito e Acidentes</option>
-            <option value="Saúde Pública">Saúde Pública</option>
-            <option value="Iluminação Pública">Iluminação Pública</option>
-            <option value="Buracos e Pavimentação">Buracos e Pavimentação</option>
-            <option value="Coleta de Lixo e Entulho">Coleta de Lixo e Entulho</option>
-            <option value="Água e Esgoto">Água e Esgoto</option>
-            <option value="Segurança Pública">Segurança Pública</option>
-            <option value="Poluição e Meio Ambiente">Poluição e Meio Ambiente</option>
-            <option value="Animais na Via Pública">Animais na Via Pública</option>
-            <option value="Infraestrutura Urbana">Infraestrutura Urbana</option>
-          </select>
-        </div>
+          <div className="mb-3">
+            <select
+              className="form-select"
+              value={categoria}
+              onChange={(e) => setCategoria(e.target.value)}
+            >
+              <option value="">Selecione uma categoria</option>
+              <option value="Trânsito e Acidentes">Trânsito e Acidentes</option>
+              <option value="Saúde Pública">Saúde Pública</option>
+              <option value="Iluminação Pública">Iluminação Pública</option>
+              <option value="Buracos e Pavimentação">Buracos e Pavimentação</option>
+              <option value="Coleta de Lixo e Entulho">Coleta de Lixo e Entulho</option>
+              <option value="Água e Esgoto">Água e Esgoto</option>
+              <option value="Segurança Pública">Segurança Pública</option>
+              <option value="Poluição e Meio Ambiente">Poluição e Meio Ambiente</option>
+              <option value="Animais na Via Pública">Animais na Via Pública</option>
+              <option value="Infraestrutura Urbana">Infraestrutura Urbana</option>
+            </select>
+          </div>
 
-        <div className="mb-3">
-          <textarea
-            className="form-control"
-            rows="3"
-            placeholder="Descrição do problema"
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-          />
-        </div>
+          <div className="mb-3">
+            <textarea
+              className="form-control"
+              rows="3"
+              placeholder="Descrição do problema"
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+            />
+          </div>
 
-        <div className="mb-3" style={{ height: "300px" }}>
-          {userPosition && (
-            <MapContainer center={userPosition} zoom={15} style={{ height: "100%", width: "100%" }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <ClickableMap setLocalizacao={setLocalizacao} userPosition={userPosition} />
-              {localizacao && (
-                <Marker position={localizacao.split(',').map(Number)}>
-                  <Popup>Local selecionado</Popup>
-                </Marker>
-              )}
-            </MapContainer>
-          )}
-        </div>
+          <div className="mb-3" style={{ height: "300px" }}>
+            {userPosition && (
+              <MapContainer center={userPosition} zoom={15} style={{ height: "100%", width: "100%" }}>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <ClickableMap setLocalizacao={setLocalizacao} userPosition={userPosition} />
+                {localizacao && (
+                  <Marker position={localizacao.split(',').map(Number)}>
+                    <Popup>Local selecionado</Popup>
+                  </Marker>
+                )}
+              </MapContainer>
+            )}
+          </div>
 
-        <div className="mb-3">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="form-control"
-          />
-        </div>
+          <div className="mb-3">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="form-control"
+            />
+          </div>
 
-        <button type="submit" className="btn btn-primary w-100">Enviar Ocorrência</button>
-      </form>
+          <button type="submit" className="btn btn-success w-100">Enviar Ocorrência</button>
+        </form>
 
-      {mensagem && <p className="mt-3 text-success">{mensagem}</p>}
-      {respostaIA && (
-        <>
-          <h4 className="mt-4">Orientação da IA:</h4>
-          <p>{respostaIA}</p>
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="btn btn-secondary mt-3"
-          >
-            Voltar para o Início
-          </button>
-        </>
-      )}
+        {mensagem && <p className="mt-3 text-success text-center">{mensagem}</p>}
+        {respostaIA && (
+          <div className="text-center mt-4">
+            <h4>Orientação da IA:</h4>
+            <p>{respostaIA}</p>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="btn btn-secondary mt-3"
+            >
+              Voltar para o Início
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Botão flutuante para voltar ao dashboard */}
       <button

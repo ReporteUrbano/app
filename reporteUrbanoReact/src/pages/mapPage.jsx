@@ -108,7 +108,14 @@ function LocationMarkerWithOcorrencias({ somenteMinhas, categoriaFiltro }) {
             <Popup>
               <strong>{ocorrencia.tituloProblema}</strong><br />
               {ocorrencia.descricao}<br />
-              <em>Categoria: {ocorrencia.categoria}</em>
+              <em>Categoria: {ocorrencia.categoria}</em><br /><br />
+                {ocorrencia.foto && (
+                    <img
+                        src={ocorrencia.foto}
+                        alt="Foto da ocorrência"
+                        className="img-fluid rounded"
+                    />
+                )}
             </Popup>
           </Marker>
         );

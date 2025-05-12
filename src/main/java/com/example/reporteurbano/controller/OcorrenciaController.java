@@ -5,6 +5,7 @@ import com.example.reporteurbano.model.Ocorrencia;
 import com.example.reporteurbano.service.OcorrenciaService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,7 @@ public class OcorrenciaController {
     }
 
     // Buscar todas as ocorrências
+    @EntityGraph(attributePaths = {"usuario"})
     @GetMapping
     public ResponseEntity<?> getAllOcorrencias() {
         try {
@@ -74,6 +76,7 @@ public class OcorrenciaController {
     }
 
     // Buscar ocorrência por ID
+    @EntityGraph(attributePaths = {"usuario"})
     @GetMapping("/{id}")
     public ResponseEntity<?> getOcorrenciaById(@PathVariable int id) {
         try {
@@ -90,6 +93,7 @@ public class OcorrenciaController {
     }
 
     // Retorna todas as ocorrências do usuário logado
+    @EntityGraph(attributePaths = {"usuario"})
     @GetMapping("/all/{userId}")
     public ResponseEntity<?> getAllOcorrenciasByLogin(@PathVariable int userId) {
         try {

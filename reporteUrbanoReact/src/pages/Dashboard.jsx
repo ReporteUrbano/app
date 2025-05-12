@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Plus, Map } from "react-bootstrap-icons"; // Instale com: npm install react-bootstrap-icons
+import { Plus, Map, Trash } from "react-bootstrap-icons"; // Instale com: npm install react-bootstrap-icons
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,6 +32,20 @@ const Dashboard = () => {
     }
   };
 
+  const delOcorrencia = async (idOcorrencia) =>{
+      try{
+          const response = await axios.delete(
+              `http://localhost:8081/api/ocorrencias/${idOcorrencia}`,
+              {
+                  headers: { Authorization: `Bearer ${token}` },
+              }
+          );
+          fetchOcorrencias();
+      } catch (error) {
+          alert("Erro ao deletar ocorrência:", error);
+      }
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
@@ -56,20 +70,36 @@ const Dashboard = () => {
                   src={ocorrencia.foto}
                   alt="Foto da ocorrência"
                   className="img-fluid rounded"
+                  style={{
+                      width: "90%"
+                  }}
                 />
               )}
+                <br /><button
+                    onClick={() => delOcorrencia(ocorrencia.id)}
+                    className="bi bi-trash rounded-circle"
+                    style={{
+                        top: "10px",
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor: "red",
+                        justifyContent: "center",
+                    }}
+                    title="deletar ocorrencia">
+                    <Trash size={26} color="white" />
+                </button>
             </div>
-          ))}
+              ))}
         </div>
       )}
 
-      <div className="d-flex justify-content-center mt-4">
-        <button onClick={handleLogout} className="btn btn-outline-danger">
-          Sair
-        </button>
-      </div>
+        <div className="d-flex justify-content-center mt-4">
+            <button onClick={handleLogout} className="btn btn-outline-danger">
+                Sair
+            </button>
+        </div>
 
-      {/* Botão flutuante Nova Ocorrência */}
+        {/* Botão flutuante Nova Ocorrência */}
       <button
         className="btn btn-success rounded-circle position-fixed"
         style={{ bottom: "20px", right: "20px", width: "60px", height: "60px" }}
@@ -88,6 +118,7 @@ const Dashboard = () => {
       </button>
     </div>
   );
+
 };
 
 export default Dashboard;

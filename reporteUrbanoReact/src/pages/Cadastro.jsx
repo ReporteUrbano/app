@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Cadastro.css";
 
 const Cadastro = () => {
   const [nome, setNome] = useState("");
@@ -14,75 +13,107 @@ const Cadastro = () => {
     e.preventDefault();
     setError("");
 
-    const response = await fetch("http://192.168.18.156:8081/api/users/register", {
+    const response = await fetch("http://localhost:8081/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome, cpf, cep, genero }),
     });
 
+    let data;
+    try {
+      data = await response.json();
+    } catch (err) {
+      setError("Erro inesperado do servidor.");
+      return;
+    }
+
     if (response.ok) {
-      console.log("Cadastro realizado!");
-      navigate("/"); // Voltar para login após cadastro
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
     } else {
-      setError("Erro ao cadastrar. Tente novamente.");
+      setError(data.error || "Erro ao cadastrar. Tente novamente.");
     }
   };
 
   return (
-    <div className="cadastro-container">
-      <h1 className="logo">Cadastro - ReporteUrbano</h1>
+    <div className="container d-flex flex-column justify-content-center align-items-center min-vh-100 bg-light px-4">
+      <h1 className="mb-4 text-success text-center">Cadastro - ReporteUrbano</h1>
 
-      <form className="cadastro-form" onSubmit={handleCadastro}>
-        <input
-          type="text"
-          placeholder="Nome Completo"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="CPF"
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="CEP"
-          value={cep}
-          onChange={(e) => setCep(e.target.value)}
-        />
+      <form className="w-100" style={{ maxWidth: "400px" }} onSubmit={handleCadastro}>
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Nome Completo"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            required
+          />
+        </div>
 
-        <div className="genero-group">
-          <label>Gênero:</label>
-          <div className="genero-options">
-            <label>
-              <input
-                type="radio"
-                value="Masculino"
-                checked={genero === "Masculino"}
-                onChange={(e) => setGenero(e.target.value)}
-              />
-              Masculino
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="Feminino"
-                checked={genero === "Feminino"}
-                onChange={(e) => setGenero(e.target.value)}
-              />
-              Feminino
-            </label>
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="CPF"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="CEP"
+            value={cep}
+            onChange={(e) => setCep(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Gênero:</label>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="genero"
+              value="Masculino"
+              checked={genero === "Masculino"}
+              onChange={(e) => setGenero(e.target.value)}
+              required
+            />
+            <label className="form-check-label">Masculino</label>
+          </div>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="genero"
+              value="Feminino"
+              checked={genero === "Feminino"}
+              onChange={(e) => setGenero(e.target.value)}
+              required
+            />
+            <label className="form-check-label">Feminino</label>
           </div>
         </div>
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit" className="btn btn-success w-100">
+          Cadastrar
+        </button>
       </form>
 
-      {error && <p className="error-message">{error}</p>}
+      {error && <div className="alert alert-danger mt-3 w-100 text-center">{error}</div>}
 
-      <p className="register-link">
-        Já tem conta? <Link to="/">Entrar</Link>
+      <p className="mt-3 text-muted text-center">
+        Já tem conta?{" "}
+        <Link to="/" className="text-success fw-bold text-decoration-none">
+          Entrar
+        </Link>
       </p>
     </div>
   );

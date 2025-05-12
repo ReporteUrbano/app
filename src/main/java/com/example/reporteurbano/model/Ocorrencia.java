@@ -16,15 +16,17 @@ public class Ocorrencia {
     private String localizacao;
     @Column(columnDefinition = "TEXT")
     private String foto;
+    private String categoria;
 
 
     public Ocorrencia() {}
 
-    public Ocorrencia(String tituloProblema, String descricao, String localizacao, String foto) {
+    public Ocorrencia(String tituloProblema, String descricao, String localizacao, String foto, String categoria) {
         this.tituloProblema = tituloProblema;
         this.descricao = descricao;
         this.localizacao = localizacao;
         this.foto = foto;
+        this.categoria = categoria;
     }
 
     // Getters e Setters
@@ -45,4 +47,7 @@ public class Ocorrencia {
 
     public String getFoto() { return foto; }
     public void setFoto(String foto) { this.foto = foto; }
+
+    public String getCategoria() {return categoria;}
+    public void setCategoria(String categoria) {this.categoria = categoria;}
 }

@@ -67,7 +67,7 @@ const NovaOcorrencia = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.5.116:8081/api/ocorrencias",
+        "http://localhost:8081/api/ocorrencias",
         novaOcorrencia,
         {
           headers: { Authorization: `Bearer ${token}` }

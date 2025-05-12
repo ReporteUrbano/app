@@ -16,8 +16,9 @@ L.Icon.Default.mergeOptions({
 function LocationMarkerWithOcorrencias() {
   const [position, setPosition] = useState(null);
   const [ocorrencias, setOcorrencias] = useState([]);
-  const map = useMap();
-  const token = localStorage.getItem("token");
+  const map = useMap(); //chama o mapa
+  //pega o token e o id do usuario do local storage
+  const token = localStorage.getItem("token"); 
   const idUsuarioLogado = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -28,21 +29,25 @@ function LocationMarkerWithOcorrencias() {
       timeout: 10000,
     });
 
+    //seta a visao para a localização do usuario
     map.on("locationfound", (e) => {
       setPosition(e.latlng);
     });
 
+    //mostra um erro em caso de não conseguir pegar a localização
     map.on("locationerror", (e) => {
       alert("Erro ao obter localização: " + e.message);
     });
   }, [map]);
 
+  //manda um post para pegar todas as correncias
   useEffect(() => {
     const fetchOcorrencias = async () => {
       try {
-        const response = await axios.get("http://192.168.5.116:8081/api/ocorrencias/all/" + idUsuarioLogado, {
+        const response = await axios.get("http://localhost:8081/api/ocorrencias/all/" + idUsuarioLogado, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        //seta a variavel de ocorrencias para a resposta
         setOcorrencias(response.data);
       } catch (error) {
         console.error("Erro ao buscar ocorrências:", error);
@@ -60,6 +65,7 @@ function LocationMarkerWithOcorrencias() {
         </Marker>
       )}
 
+      // basicamente um for que pega todas as ocorrencia e pega seu index
       {ocorrencias.map((ocorrencia, index) => {
         // Supondo que o campo localização seja uma string como "LatLng(-23.657689, -52.605386)"
         const match = ocorrencia.localizacao?.match(/-?\d+\.\d+/g);

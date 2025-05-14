@@ -29,7 +29,7 @@ public class UsuarioController {
         try {
             Usuario novoUsuario = usuarioService.cadastrarUsuario(usuario);
             if(novoUsuario == null){
-                return new ResponseEntity<>(novoUsuario, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("CPF já cadastrado", HttpStatus.BAD_REQUEST);
             }else{
                 return new ResponseEntity<>(novoUsuario, HttpStatus.CREATED);
             }

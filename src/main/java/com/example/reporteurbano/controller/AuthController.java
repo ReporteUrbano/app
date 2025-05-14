@@ -5,6 +5,7 @@ import com.example.reporteurbano.dto.RegisterRequestDTO;
 import com.example.reporteurbano.dto.ResponseDTO;
 import com.example.reporteurbano.infra.security.TokenService;
 import com.example.reporteurbano.model.Usuario;
+import com.example.reporteurbano.model.validaCPF;
 import com.example.reporteurbano.repository.UsuarioRepository;
 import com.example.reporteurbano.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,15 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO body){
         Optional<Usuario> existingUser = repository.findByCpf(body.cpf());
+        boolean cpfIsValid = validaCPF.isCPF(body.cpf());
         if (existingUser.isPresent()) {
             return ResponseEntity
                     .badRequest()
                     .body("{\"error\": \"CPF já cadastrado\"}");
+        }else if(!cpfIsValid){
+            return ResponseEntity
+                    .badRequest()
+                    .body("{\"error\": \"CPF inválido\"}");
         }
 
         Usuario newUser = new Usuario();

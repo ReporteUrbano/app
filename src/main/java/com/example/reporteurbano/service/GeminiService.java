@@ -23,7 +23,7 @@ public class GeminiService {
     public String gerarOrientacaoIA(Ocorrencia ocorrencia) {
         try {
             // Prompt personalizado
-            String prompt = "Com base na imagem, na descrição do problema urbano e na localização informada, diga onde reportar esse problema, como fazer isso, e uma dica útil de como agir no curto prazo. "
+            String prompt = "Com base na imagem, na descrição do problema urbano e na localização informada em latitude e longitude, preciso que seja bem preciso nesse ponto, diga onde reportar esse problema, como fazer isso, e uma dica útil de como agir no curto prazo. "
                     + "Descrição: " + ocorrencia.getDescricao() + ". "
                     + "Localização: " + ocorrencia.getLocalizacao()
                     + "Preciso de um email e um telefone para enviar meu reporte e preciso da resposta mais curta e objetiva possível!!!";

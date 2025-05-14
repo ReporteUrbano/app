@@ -1,6 +1,7 @@
 package com.example.reporteurbano.service;
 
 import com.example.reporteurbano.model.Usuario;
+import com.example.reporteurbano.model.validaCPF;
 import com.example.reporteurbano.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 

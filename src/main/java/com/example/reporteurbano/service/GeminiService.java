@@ -28,7 +28,6 @@ public class GeminiService {
     public String gerarOrientacaoIA(Ocorrencia ocorrencia) {
 
         String endereco = obterEndereco(ocorrencia.getLocalizacao());
-        System.out.println(endereco);
         try {
             // Prompt personalizado
             String prompt = "Com base na imagem, na descrição do problema urbano e na localização informada, preciso que seja bem preciso na localizacao, diga onde reportar esse problema, como fazer isso, e uma dica útil de como agir no curto prazo. "
@@ -88,7 +87,7 @@ public class GeminiService {
                 return "Formato inválido";
             }
 
-            // Extrai os números de dentro de LatLng(...)
+            // Extrai os números da latitude e longitude
             String match = localizacao.replaceAll("[^\\d\\-.,]", ""); // Remove letras e parenteses
             String[] partes = match.split(",");
             if (partes.length < 2) {
@@ -98,6 +97,7 @@ public class GeminiService {
             double lat = Double.parseDouble(partes[0]);
             double lon = Double.parseDouble(partes[1]);
 
+            //manda para a API do openStreetMap
             String urlStr = String.format(Locale.US,
                     "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=json",
                     lat, lon
@@ -114,6 +114,7 @@ public class GeminiService {
             }
             sc.close();
 
+            //pega o retorno da API e usa ela para pegar cidade estado e pais
             JSONObject json = new JSONObject(jsonStr.toString());
             JSONObject address = json.getJSONObject("address");
 

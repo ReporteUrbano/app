@@ -48,6 +48,7 @@ const NovaOcorrencia = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserPosition([latitude, longitude]);
+          setLocalizacao(userPosition);
         },
         (error) => console.error("Erro ao obter localização:", error),
         { enableHighAccuracy: true, timeout: 10000 }
@@ -67,11 +68,22 @@ const NovaOcorrencia = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+      let coords = localizacao;                   // mantém o que já foi selecionado
+      if (!coords) {                              // se não há nada selecionado no mapa
+          coords = await new Promise((resolve) => {
+              navigator.geolocation.getCurrentPosition(
+                  ({ coords }) => resolve(`${coords.latitude},${coords.longitude}`),
+                  () => resolve(""),                   // em caso de erro, resolve vazio
+                  { enableHighAccuracy: true }
+              );
+          });
+      }
+
     const novaOcorrencia = {
       tituloProblema,
       categoria,
       descricao,
-      localizacao,
+      localizacao: coords,
       foto,
       userId
     };

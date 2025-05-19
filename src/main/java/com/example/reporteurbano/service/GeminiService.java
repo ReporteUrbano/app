@@ -6,11 +6,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.example.reporteurbano.model.Ocorrencia;
 
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Scanner;
+import org.json.JSONObject;
 
 @Service
 public class GeminiService {
@@ -21,12 +26,14 @@ public class GeminiService {
     private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
 
     public String gerarOrientacaoIA(Ocorrencia ocorrencia) {
+
+        String endereco = obterEndereco(ocorrencia.getLocalizacao());
         try {
             // Prompt personalizado
-            String prompt = "Com base na imagem, na descrição do problema urbano e na localização informada em latitude e longitude, preciso que seja bem preciso nesse ponto, diga onde reportar esse problema, como fazer isso, e uma dica útil de como agir no curto prazo. "
+            String prompt = "Com base na imagem, na descrição do problema urbano e na localização informada, preciso que seja bem preciso na localizacao, diga onde reportar esse problema, como fazer isso, e uma dica útil de como agir no curto prazo. "
                     + "Descrição: " + ocorrencia.getDescricao() + ". "
-                    + "Localização: " + ocorrencia.getLocalizacao()
-                    + "Preciso de um email e um telefone para enviar meu reporte e preciso da resposta mais curta e objetiva possível!!!";
+                    + "Localização: " + endereco
+                    + "Preciso de um email e um telefone para enviar meu reporte e preciso da resposta muito curta, apenas o básico, somente as informaç~poes essenciais!!!";
 
             // Remover o prefixo "data:image/jpeg;base64," ou "data:image/png;base64,"
             String fotoBase64 = ocorrencia.getFoto();
@@ -70,6 +77,59 @@ public class GeminiService {
             }
         } catch (IOException | InterruptedException e) {
             return "Erro ao processar requisição da IA: " + e.getMessage();
+        }
+    }
+
+    //localizacao em latitude e longitude
+    public static String obterEndereco(String localizacao) {
+        try {
+            if (localizacao == null) {
+                return "Formato inválido";
+            }
+
+            // Extrai os números da latitude e longitude
+            String match = localizacao.replaceAll("[^\\d\\-.,]", ""); // Remove letras e parenteses
+            String[] partes = match.split(",");
+            if (partes.length < 2) {
+                return localizacao;
+            }
+
+            double lat = Double.parseDouble(partes[0]);
+            double lon = Double.parseDouble(partes[1]);
+
+            //manda para a API do openStreetMap
+            String urlStr = String.format(Locale.US,
+                    "https://nominatim.openstreetmap.org/reverse?lat=%f&lon=%f&format=json",
+                    lat, lon
+            );
+            URL url = new URL(urlStr);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+            Scanner sc = new Scanner(conn.getInputStream());
+            StringBuilder jsonStr = new StringBuilder();
+            while (sc.hasNext()) {
+                jsonStr.append(sc.nextLine());
+            }
+            sc.close();
+
+            //pega o retorno da API e usa ela para pegar cidade estado e pais
+            JSONObject json = new JSONObject(jsonStr.toString());
+            JSONObject address = json.getJSONObject("address");
+
+            String cidade = address.has("city") ? address.getString("city") :
+                    address.has("town") ? address.getString("town") :
+                            address.has("village") ? address.getString("village") : "Cidade desconhecida";
+
+            String estado = address.optString("state", "Estado desconhecido");
+            String pais = address.optString("country", "País desconhecido");
+
+            return cidade + ", " + estado + ", " + pais;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Erro ao obter endereço";
         }
     }
 }

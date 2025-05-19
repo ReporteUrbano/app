@@ -9,9 +9,11 @@ import com.example.reporteurbano.model.validaCPF;
 import com.example.reporteurbano.repository.UsuarioRepository;
 import com.example.reporteurbano.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,13 +34,19 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body){
-        Usuario user =  this.repository.findByCpf(body.cpf()).orElseThrow(() -> new RuntimeException("User not found"));
-        if(Objects.equals(user.getCpf(), body.cpf())){
-            String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
+        Optional<Usuario> userOpt = repository.findByCpf(body.cpf());
+
+        if (userOpt.isEmpty()) {
+            // Retorna 404 com uma mensagem simples
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Usuário não encontrado"));
         }
-        return ResponseEntity.badRequest().build();
+
+        Usuario user = userOpt.get();
+
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
     }
 
     @PostMapping("/register")

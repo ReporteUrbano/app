@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
+
 import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -105,6 +107,9 @@ const NovaOcorrencia = () => {
       setDescricao("");
       setLocalizacao("");
       setFoto("");
+
+      //confirmação que criou
+      Swal.fire("Sucesso!", "A ocorrência foi criada com sucesso.", "success");
     } catch (error) {
       console.error("Erro ao criar ocorrência:", error);
       setMensagem("Erro ao criar ocorrência.");

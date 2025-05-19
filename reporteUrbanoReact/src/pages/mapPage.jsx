@@ -53,6 +53,7 @@ function LocationMarkerWithOcorrencias({ somenteMinhas, categoriaFiltro }) {
   useEffect(() => {
     map.locate({
       setView: true,
+      zoom: 13,
       maxZoom: 18,
       enableHighAccuracy: true,
       timeout: 10000,

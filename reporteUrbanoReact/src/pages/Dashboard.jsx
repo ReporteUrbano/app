@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Plus, Map, Trash } from "react-bootstrap-icons"; // Instale com: npm install react-bootstrap-icons
 
@@ -32,19 +33,35 @@ const Dashboard = () => {
     }
   };
 
-  const delOcorrencia = async (idOcorrencia) =>{
-      try{
-          const response = await axios.delete(
-              `http://localhost:8081/api/ocorrencias/${idOcorrencia}`,
-              {
-                  headers: { Authorization: `Bearer ${token}` },
-              }
-          );
-          fetchOcorrencias();
-      } catch (error) {
-          alert("Erro ao deletar ocorrência:", error);
-      }
-  }
+    const delOcorrencia = async (idOcorrencia) => {
+        //cria um popup de confirmação para o usuário
+        const confirm = await Swal.fire({
+            title: "Tem certeza?",
+            text: "Essa ocorrência será apagada permanentemente.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sim, apagar!",
+            cancelButtonText: "Cancelar",
+        });
+
+        //realiza o delete apenas se o usuário confirmar
+        if (confirm.isConfirmed) {
+            try {
+                await axios.delete(
+                    `http://localhost:8081/api/ocorrencias/${idOcorrencia}`,
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                Swal.fire("Deletado!", "A ocorrência foi removida.", "success");
+                fetchOcorrencias();
+            } catch (error) {
+                Swal.fire("Erro!", "Erro ao deletar ocorrência.", "error");
+            }
+        }
+    };
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
@@ -71,25 +88,31 @@ const Dashboard = () => {
                   alt="Foto da ocorrência"
                   className="img-fluid rounded"
                   style={{
+                      right: "20px",
                       width: "90%"
                   }}
                 />
               )}
-                <br /><button
+                <br /><br />
+                <button
                     onClick={() => delOcorrencia(ocorrencia.id)}
-                    className="bi bi-trash rounded-circle"
                     style={{
-                        top: "10px",
                         width: "40px",
                         height: "40px",
                         backgroundColor: "red",
+                        display: "flex",
                         justifyContent: "center",
+                        alignItems: "center",
+                        border: "none", // remove o padrão
+                        padding: 0, // remove espaçamento interno
+                        cursor: "pointer",
                     }}
-                    title="deletar ocorrencia">
-                    <Trash size={26} color="white" />
+                    title="Deletar ocorrência"
+                >
+                    <Trash size={20} color="white"/>
                 </button>
             </div>
-              ))}
+          ))}
         </div>
       )}
 
@@ -100,9 +123,9 @@ const Dashboard = () => {
         </div>
 
         {/* Botão flutuante Nova Ocorrência */}
-      <button
-        className="btn btn-success rounded-circle position-fixed"
-        style={{ bottom: "20px", right: "20px", width: "60px", height: "60px" }}
+        <button
+            className="btn btn-success rounded-circle position-fixed"
+            style={{bottom: "20px", right: "20px", width: "60px", height: "60px" }}
         onClick={() => navigate("/nova-ocorrencia")}
       >
         <Plus size={30} color="white" />

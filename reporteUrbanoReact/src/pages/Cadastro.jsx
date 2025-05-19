@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useLoading } from "../context/LoadingContext"; //  Importa o contexto de loading
 
 const Cadastro = () => {
   const [nome, setNome] = useState("");
@@ -9,31 +9,39 @@ const Cadastro = () => {
   const [genero, setGenero] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setIsLoading } = useLoading(); //  Usa o hook do loading
 
   const handleCadastro = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true); //  Mostra o loading
 
-    const response = await fetch("http://localhost:8081/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome, cpf, cep, genero }),
-    });
-
-    let data;
     try {
-      data = await response.json();
-    } catch (err) {
-      setError("Erro inesperado do servidor.");
-      return;
-    }
+      const response = await fetch("http://localhost:8081/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, cpf, cep, genero }),
+      });
 
-    if (response.ok) {
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("token", data.token);
-      navigate("/dashboard");
-    } else {
-      setError(data.error || "Erro ao cadastrar. Tente novamente.");
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        setError("Erro inesperado do servidor.");
+        return;
+      }
+
+      if (response.ok) {
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("token", data.token);
+        navigate("/dashboard");
+      } else {
+        setError(data.error || "Erro ao cadastrar. Tente novamente.");
+      }
+    } catch (err) {
+      setError("Erro ao conectar com o servidor.");
+    } finally {
+      setIsLoading(false); // ✅ Esconde o loading
     }
   };
 

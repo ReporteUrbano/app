@@ -34,19 +34,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
-        Optional<Usuario> userOpt = repository.findByCpf(body.cpf());
-
-        if (userOpt.isEmpty()) {
-            // Retorna 404 com uma mensagem simples
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("message", "Usuário não encontrado"));
+    public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body){
+        Usuario user =  this.repository.findByCpf(body.cpf()).orElseThrow(() -> new RuntimeException("User not found"));
+        if(Objects.equals(user.getCpf(), body.cpf())){
+            String token = this.tokenService.generateToken(user);
+            return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
         }
-
-        Usuario user = userOpt.get();
-
-        String token = tokenService.generateToken(user);
-        return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register")

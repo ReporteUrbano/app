@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useLoading } from "../context/LoadingContext"; // IMPORTAÇÃO DO CONTEXTO
 
 // Corrigindo o ícone do Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -31,6 +32,7 @@ const ClickableMap = ({ setLocalizacao, userPosition }) => {
 const NovaOcorrencia = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const { setIsLoading } = useLoading(); // Hook do loading
 
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
   const [tituloProblema, setTituloProblema] = useState("");
@@ -48,7 +50,7 @@ const NovaOcorrencia = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setUserPosition([latitude, longitude]);
-          setLocalizacao(userPosition);
+          setLocalizacao(`${latitude},${longitude}`);
         },
         (error) => console.error("Erro ao obter localização:", error),
         { enableHighAccuracy: true, timeout: 10000 }
@@ -67,17 +69,18 @@ const NovaOcorrencia = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // ⏳ Mostra o loading
 
-      let coords = localizacao;                   // mantém o que já foi selecionado
-      if (!coords) {                              // se não há nada selecionado no mapa
-          coords = await new Promise((resolve) => {
-              navigator.geolocation.getCurrentPosition(
-                  ({ coords }) => resolve(`${coords.latitude},${coords.longitude}`),
-                  () => resolve(""),                   // em caso de erro, resolve vazio
-                  { enableHighAccuracy: true }
-              );
-          });
-      }
+    let coords = localizacao;
+    if (!coords) {
+      coords = await new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          ({ coords }) => resolve(`${coords.latitude},${coords.longitude}`),
+          () => resolve(""),
+          { enableHighAccuracy: true }
+        );
+      });
+    }
 
     const novaOcorrencia = {
       tituloProblema,
@@ -105,6 +108,8 @@ const NovaOcorrencia = () => {
     } catch (error) {
       console.error("Erro ao criar ocorrência:", error);
       setMensagem("Erro ao criar ocorrência.");
+    } finally {
+      setIsLoading(false); // ✅ Esconde o loading
     }
   };
 
@@ -121,6 +126,7 @@ const NovaOcorrencia = () => {
               placeholder="Título do problema"
               value={tituloProblema}
               onChange={(e) => setTituloProblema(e.target.value)}
+              required
             />
           </div>
 
@@ -129,6 +135,7 @@ const NovaOcorrencia = () => {
               className="form-select"
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
+              required
             >
               <option value="">Selecione uma categoria</option>
               <option value="Trânsito e Acidentes">Trânsito e Acidentes</option>
@@ -151,6 +158,7 @@ const NovaOcorrencia = () => {
               placeholder="Descrição do problema"
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
+              required
             />
           </div>
 
@@ -181,6 +189,7 @@ const NovaOcorrencia = () => {
         </form>
 
         {mensagem && <p className="mt-3 text-success text-center">{mensagem}</p>}
+
         {respostaIA && (
           <div className="text-center mt-4">
             <h4>Orientação da IA:</h4>
@@ -195,7 +204,6 @@ const NovaOcorrencia = () => {
         )}
       </div>
 
-      {/* Botão flutuante para voltar ao dashboard */}
       <button
         onClick={() => navigate("/dashboard")}
         className="btn btn-outline-dark position-fixed"

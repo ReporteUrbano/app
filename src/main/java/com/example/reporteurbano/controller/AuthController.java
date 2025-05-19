@@ -32,13 +32,21 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO> login(@RequestBody LoginRequestDTO body){
-        Usuario user =  this.repository.findByCpf(body.cpf()).orElseThrow(() -> new RuntimeException("User not found"));
-        if(Objects.equals(user.getCpf(), body.cpf())){
-            String token = this.tokenService.generateToken(user);
-            return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO body) {
+        Optional<Usuario> userOptional = repository.findByCpf(body.cpf());
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity
+                    .status(403)
+                    .body("{\"error\": \"Usuário não encontrado\"}");
         }
-        return ResponseEntity.badRequest().build();
+
+        Usuario user = userOptional.get();
+
+        // Aqui você pode adicionar uma verificação de senha futuramente
+
+        String token = tokenService.generateToken(user);
+        return ResponseEntity.ok(new ResponseDTO(user.getId(), token));
     }
 
     @PostMapping("/register")

@@ -1,31 +1,40 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useLoading } from "../context/LoadingContext"; //  Importa o contexto de loading
 
 const Login = () => {
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setIsLoading } = useLoading(); //  Usa o hook do loading
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true); //  Ativa o loading
 
-    const response = await fetch("http://localhost:8081/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cpf, nome }),
-    });
+    try {
+      const response = await fetch("http://localhost:8081/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cpf, nome }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      console.log("Usuário logado:", data);
-      localStorage.setItem("userId", data.userId);
-      localStorage.setItem("token", data.token);
-      navigate("/dashboard");
-    } else {
-      setError(data.error || "Erro desconhecido ao fazer login");
+      if (response.ok) {
+        console.log("Usuário logado:", data);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("token", data.token);
+        navigate("/dashboard");
+      } else {
+        setError(data.error || "Erro desconhecido ao fazer login");
+      }
+    } catch (err) {
+      setError("Erro ao conectar com o servidor.");
+    } finally {
+      setIsLoading(false); // ✅ Desativa o loading
     }
   };
 

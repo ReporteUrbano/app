@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // Corrige o bug do ícone padrão do Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 
-const iconBaseUrl = "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/";
+const iconBaseUrl = "/leaflet-icons/";
 
 const iconMap = {
   "Trânsito e Acidentes": "marker-icon-red.png",
@@ -25,9 +25,11 @@ const iconMap = {
 
 const userIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-  iconSize: [32, 32],
+  iconSize: [40, 40],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
+  shadowUrl: iconBaseUrl + "marker-shadow.png", // usa sombra local
+  shadowSize: [41, 41],
 });
 
 function getCategoriaIcon(categoria) {
@@ -37,7 +39,7 @@ function getCategoriaIcon(categoria) {
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
-    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    shadowUrl: iconBaseUrl + "marker-shadow.png", // usa sombra local
     shadowSize: [41, 41],
   });
 }
@@ -115,6 +117,10 @@ function LocationMarkerWithOcorrencias({ somenteMinhas, categoriaFiltro }) {
                         src={ocorrencia.foto}
                         alt="Foto da ocorrência"
                         className="img-fluid rounded"
+                        style={{
+                          right: "20px",
+                          width: "110%"
+                        }}
                     />
                 )}
             </Popup>

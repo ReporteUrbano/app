@@ -89,7 +89,7 @@ const Dashboard = () => {
                   className="img-fluid rounded"
                   style={{
                       right: "20px",
-                      width: "90%"
+                      width: "110%"
                   }}
                 />
               )}

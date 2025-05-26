@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.reporteurbano.service.GeminiService;
+import jakarta.validation.Valid;
 
 import java.util.Map;
 import java.util.List;
@@ -33,7 +34,7 @@ public class OcorrenciaController {
 
     // Criar ou atualizar ocorrência
     @PostMapping
-    public ResponseEntity<?> createOcorrencia(@RequestBody OcorrenciaDTO dto, HttpServletRequest request) {
+    public ResponseEntity<?> createOcorrencia(@Valid @RequestBody OcorrenciaDTO dto, HttpServletRequest request) {
         Ocorrencia ocorrencia = new Ocorrencia();
         ocorrencia.setTituloProblema(dto.tituloProblema());
         ocorrencia.setDescricao(dto.descricao());

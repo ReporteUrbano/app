@@ -76,6 +76,7 @@ public class GeminiService {
                 return "Erro ao buscar resposta da IA (HTTP " + response.statusCode() + ")";
             }
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace(); // Enhanced error logging
             return "Erro ao processar requisição da IA: " + e.getMessage();
         }
     }
@@ -83,19 +84,18 @@ public class GeminiService {
     //localizacao em latitude e longitude
     public static String obterEndereco(String localizacao) {
         try {
-            if (localizacao == null) {
-                return "Formato inválido";
+            if (localizacao == null || localizacao.trim().isEmpty()) {
+                return "Localização inválida: não pode ser nula ou vazia.";
             }
 
-            // Extrai os números da latitude e longitude
-            String match = localizacao.replaceAll("[^\\d\\-.,]", ""); // Remove letras e parenteses
-            String[] partes = match.split(",");
-            if (partes.length < 2) {
-                return localizacao;
+            String[] partes = localizacao.split(",");
+            if (partes.length != 2) {
+                return "Localização inválida: formato esperado 'latitude,longitude'.";
             }
 
-            double lat = Double.parseDouble(partes[0]);
-            double lon = Double.parseDouble(partes[1]);
+            // Attempt to parse, exceptions will be caught by the existing catch block
+            double lat = Double.parseDouble(partes[0].trim());
+            double lon = Double.parseDouble(partes[1].trim());
 
             //manda para a API do openStreetMap
             String urlStr = String.format(Locale.US,
@@ -128,7 +128,7 @@ public class GeminiService {
             return cidade + ", " + estado + ", " + pais;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Ensure this remains
             return "Erro ao obter endereço";
         }
     }

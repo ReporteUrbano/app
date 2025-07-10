@@ -30,10 +30,14 @@ public class GeminiService {
         String endereco = obterEndereco(ocorrencia.getLocalizacao());
         try {
             // Prompt personalizado
-            String prompt = "Com base na imagem, na descrição do problema urbano e na localização informada, preciso que seja bem preciso na localizacao, diga onde reportar esse problema, como fazer isso, e uma dica útil de como agir no curto prazo. "
-                    + "Descrição: " + ocorrencia.getDescricao() + ". "
-                    + "Localização: " + endereco
-                    + "Preciso de um email e um telefone para enviar meu reporte e preciso da resposta muito curta, apenas o básico, somente as informaç~poes essenciais!!!";
+            String prompt = "Com base na imagem, na descrição do problema urbano e na localização fornecida, responda com:\n" +
+                    "1. Uma ação imediata que o cidadão pode tomar.\n" +
+                    "2. Apenas um telefone e um e-mail do órgão responsável da cidade.\n" +
+                    "\n" +
+                    "Descrição:" + ocorrencia.getDescricao() +
+                    "\nEndereço:" + endereco +
+                    "\n" +
+                    "Responda em no máximo 3 linhas. Não inclua explicações ou contexto.";
 
             // Remover o prefixo "data:image/jpeg;base64," ou "data:image/png;base64,"
             String fotoBase64 = ocorrencia.getFoto();
